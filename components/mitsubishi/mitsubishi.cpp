@@ -433,6 +433,9 @@ bool MitsubishiClimate::on_receive(remote_base::RemoteReceiveData data) {
     case MITSUBISHI_NIGHTMODE:
       this->preset = climate::CLIMATE_PRESET_SLEEP;
       break;
+    default:
+      this->preset = climate::CLIMATE_PRESET_NONE;
+      break;
   }
 
 #if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERBOSE
