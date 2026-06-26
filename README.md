@@ -51,6 +51,7 @@ Fully tested.
 - All temperatures from 61°F through 88°F decode correctly.
 - No erroneous 90–100°F jumps.
 - Every 1°F increment is preserved.
+- ECONO COOL receive state is decoded correctly, including clearing the Eco preset when ECONO COOL is disabled from the physical remote.
 
 ### Transmit
 
