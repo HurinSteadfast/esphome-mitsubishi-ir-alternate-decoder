@@ -2,31 +2,36 @@
 
 An alternate receive decoder for the ESPHome Mitsubishi IR climate component.
 
-This project was created after discovering that ESPHome incorrectly decoded temperature setpoints transmitted by certain Mitsubishi Electric Fahrenheit remotes. The result was Home Assistant displaying incorrect temperatures (sometimes jumping to 90–100°F) when the physical remote was used.
+This project was created after discovering that ESPHome incorrectly decoded temperature setpoints transmitted by certain Mitsubishi Electric Fahrenheit remotes. The result was Home Assistant displaying incorrect temperatures, sometimes jumping into the 90–100°F range, when the physical remote was used.
 
-This decoder correctly interprets the temperature encoding used by these remotes while remaining fully compatible with the existing ESPHome Mitsubishi transmitter.
+This decoder correctly interprets the temperature encoding used by these remotes while remaining compatible with the existing ESPHome Mitsubishi transmitter.
 
 ## Tested Hardware
 
 ### Indoor Unit
+
 - Mitsubishi Electric MSZ-JP09WA
+- Manual family: MSZ-JP09WA / MSZ-JP12WA
 
 ### Remote
-- Mitsubishi Electric MS16A (sticker: **MS16A 1N2M**)
+
+- Mitsubishi Electric MS16A
+- Sticker text: MS16A 1N2M
 - Fahrenheit mode
 - 61°F–88°F temperature range
 - 1°F temperature increments
 
 ## Problem
 
-The stock ESPHome Mitsubishi receiver assumes the temperature byte is encoded as a simple Celsius offset.
+The stock ESPHome Mitsubishi receiver assumes the received temperature byte is encoded as a simple Celsius offset.
 
-That assumption is not valid for the MS16A Fahrenheit remote.
+That assumption is not valid for this MS16A Fahrenheit remote.
 
 As a result:
 
-- Home Assistant would sometimes display impossible temperatures (99°F, 100°F, etc.)
-- After partially masking the byte, temperatures no longer jumped but every other button press collapsed to the same temperature because the decoder still assumed whole Celsius steps.
+- Home Assistant could display impossible temperatures such as 99°F or 100°F.
+- A simple nibble mask fixed the large jumps but lost 1°F precision.
+- Every other button press could collapse into the same whole-Celsius value.
 
 ## Solution
 
@@ -40,24 +45,22 @@ The result is correct synchronization of every 1°F button press from the physic
 
 ### Receive
 
-✅ Fully tested
+Fully tested.
 
-- Physical remote changes immediately update Home Assistant
-- All temperatures from 61°F through 88°F decode correctly
-- No erroneous 90–100°F jumps
-- Every 1°F increment is preserved
+- Physical remote changes update Home Assistant.
+- All temperatures from 61°F through 88°F decode correctly.
+- No erroneous 90–100°F jumps.
+- Every 1°F increment is preserved.
 
 ### Transmit
 
-The existing ESPHome Mitsubishi transmitter appears to function correctly with this hardware.
+The existing ESPHome Mitsubishi transmitter appears to function correctly with this hardware in normal use.
 
-While transmit behavior has been tested successfully in normal operation, this project specifically addresses receive-side decoding.
+This project specifically addresses receive-side decoding.
 
 ## Installation
 
-This project is intended to be used as an ESPHome External Component.
-
-Example:
+Use this repository as an ESPHome external component:
 
 ```yaml
 external_components:
@@ -68,11 +71,12 @@ external_components:
       - mitsubishi
 ```
 
-Then configure your climate component normally:
+Then configure the Mitsubishi climate component normally:
 
 ```yaml
 climate:
   - platform: mitsubishi
+    name: Mitsubishi Mini-Split
     transmitter_id: remote_transmitter_1
     receiver_id: remote_receiver_1
 ```
@@ -81,9 +85,9 @@ climate:
 
 The goal is not to replace ESPHome's Mitsubishi component.
 
-The goal is to provide an alternate decoder for Mitsubishi remotes whose temperature encoding differs from the implementation currently included in ESPHome.
+The goal is to provide an alternate receive decoder for Mitsubishi remotes whose temperature encoding differs from the implementation currently included in ESPHome.
 
-If additional Mitsubishi remote variants are discovered, they can be incorporated here and ultimately proposed upstream to ESPHome.
+If additional Mitsubishi remote variants are discovered, they can be documented here and potentially proposed upstream to ESPHome.
 
 ## Contributing
 
@@ -94,5 +98,3 @@ If you have another Mitsubishi remote that exhibits incorrect temperature synchr
 - Whether the remote operates in °F or °C
 - ESPHome logs showing received AEHA frames
 - A description of the observed behavior
-
-This information will help determine whether your remote uses the same encoding or represents another protocol variant.
