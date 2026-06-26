@@ -86,15 +86,3 @@ climate:
 The goal is not to replace ESPHome's Mitsubishi component.
 
 The goal is to provide an alternate receive decoder for Mitsubishi remotes whose temperature encoding differs from the implementation currently included in ESPHome.
-
-If additional Mitsubishi remote variants are discovered, they can be documented here and potentially proposed upstream to ESPHome.
-
-## Contributing
-
-If you have another Mitsubishi remote that exhibits incorrect temperature synchronization, please open an issue and include:
-
-- Indoor unit model
-- Remote model number
-- Whether the remote operates in °F or °C
-- ESPHome logs showing received AEHA frames
-- A description of the observed behavior
